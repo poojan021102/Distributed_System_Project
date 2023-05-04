@@ -14,7 +14,8 @@ def check_fault(c,addr):
     c.close()
             
 
-name = []
+ip = []
+port = []
 s = socket.socket()
 
 print("Socket created")
@@ -24,8 +25,11 @@ s.listen(1)
 print(f"IP: {socket.gethostbyname(socket.gethostname())}")
 n = int(input("Enter the number of slaves: "))
 for i in range(n):
-    h = input("NAME: ")
-    name.append("PYRONAME:" + h)
+    h = input("IP: ")
+    p = int(input("PORT: "))
+    # ip.append("PYRONAME:" + h)
+    ip.append(h)
+    port.append(p)
 print("Ready for connection...")
 while True:
     c,addr = s.accept()
