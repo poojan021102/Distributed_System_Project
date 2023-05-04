@@ -3,12 +3,18 @@ import threading
 import Pyro4
 
 def check_fault(c,addr):
-    c = Pyro4.Proxy("PYRO:obj_3a4e94dfd4fc4e12bdcbd22a09a68858@192.168.31.233:59356")  
-    print(c.Factorial(5))
+    for n in name:
+        print(n)
+        try:
+            slave = Pyro4.Proxy(n)
+            print(slave.Factorial(5))
+            break
+        except Exception:
+            print("Error")
+    c.close()
+            
 
-
-ip = []
-port = []
+name = []
 s = socket.socket()
 
 print("Socket created")
@@ -18,11 +24,9 @@ s.listen(1)
 print(f"IP: {socket.gethostbyname(socket.gethostname())}")
 n = int(input("Enter the number of slaves: "))
 for i in range(n):
-    h = input("IP: ")
-    ip.append(h)
-    p = input("PORT: ")
-    port.append(p)
-
+    h = input("NAME: ")
+    name.append("PYRONAME:" + h)
+print("Ready for connection...")
 while True:
     c,addr = s.accept()
     print("Connection made with ",addr)
