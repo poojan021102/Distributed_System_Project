@@ -1,9 +1,9 @@
 # importing library for socket programming
 import socket
 import time
-import psutil
+# import psutil
 
-IP_ADD = '192.168.31.57'
+IP_ADD = '192.168.31.88'
 PORT = 8000
 
 
@@ -30,11 +30,11 @@ try:
 except socket.error as e:
     print("Error:",e)
     
-print(c.recv(1024).decode())
-msg=psutil.sensors_battery()
-msg1=convertTime(msg.secsleft)
-msg2=msg.percent
-msg3=msg.power_plugged
-c.send(bytes(str(str(msg1)+" "+str(msg2)+" "+str(msg3)),'utf-8'))
-time.sleep(15)
+# print(c.recv(1024).decode())
+# msg=psutil.sensors_battery()
+# msg1=convertTime(msg.secsleft)
+# msg2=msg.percent
+# msg3=msg.power_plugged
+# c.send(bytes(str(str(msg1)+" "+str(msg2)+" "+str(msg3)),'utf-8'))
+# time.sleep(15)
 c.send(bytes("close",'utf-8'))
