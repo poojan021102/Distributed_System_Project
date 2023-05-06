@@ -29,30 +29,29 @@ def send_for_word_count(slave,l,queue):
 
 def user_function(c,name):
     # w = c.recv()
-    w = "This is this a\nmulti-line?spaces!text\nwith with;spaces."
+    w = "This is this a\nmulti-line?spaces!text\nwith with;spaces. asdf asdf asdf"
     words = get_all_words(w)
     n = len(name)
     each_words_count = int(len(words)/n)
     st = 0
     i = 0
-    en = 0
     queue = multiprocessing.Queue()
     processes = []
-    while en < len(words):
+    print(words)
+    while st < len(words):
         try:
             print(name[i])
             slave = Pyro4.Proxy(name[i])
             print(f"Slave {i}: {slave.getStatus()}")
-            i = ((i + 1)%len(name))
             if each_words_count == 0:
-                en = min(en + 1,len(words))
+                en = st
             else:
-                en = min(st + each_words_count - 1, len(words))
+                en = min(st + each_words_count - 1, len(words)-1)
             if en >= len(words):break
             l = []
             # print(words)
-            # print(st)
-            # print(en)
+            print(st)
+            print(en)
             j = st
             st = en + 1
             while j <= en:
@@ -64,21 +63,20 @@ def user_function(c,name):
             processes.append(p)
         except Exception as e:
             print("error")
-            break
-    
+        
+        i = ((i + 1)%len(name))
+
     for p in processes:
         p.join()
     
     d = {}
     while not queue.empty():
         s = queue.get()
-        print(s)
         u = s.split(" ")
         for y in u:
             t = y.split(":")
             if len(t) == 1:
-                break
-            
+                break 
             d[t[0]]=d.get(t[0],0) + int(t[1])
     for k in d.keys():
         print(f"{k}: {d[k]}")
