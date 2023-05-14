@@ -81,10 +81,10 @@ def performWordCount():
 
 
 def performMatrixMultiplication():
-    # c.send(bytes("2",'utf-8'))
+    c.send(bytes("2",'utf-8'))
     class MatrixInput(tk.Frame):
-        def _init_(self, parent, rows=2, cols=2):
-            super()._init_(parent)
+        def __init__(self, parent, rows=2, cols=2):
+            super().__init__(parent)
             self.rows = rows
             self.cols = cols
             self.entries = [[tk.Entry(self) for j in range(cols)] for i in range(rows)]
@@ -123,7 +123,7 @@ def performMatrixMultiplication():
         matrix_input.pack()
 
         def print_matrix1():
-            c.send(bytes("2",'utf-8'))
+            # c.send(bytes("2",'utf-8'))
             matrix = matrix_input.get_matrix()
             
             c.send(pickle.dumps(matrix))
@@ -172,7 +172,7 @@ def performMatrixMultiplication():
 root = tk.Tk()
 root.geometry("500x500")
 
-ip = ["192.168.29.62"]
+ip = ["192.168.29.73","192.168.29.62"]
 i = 0
 c = 1
 PORT = 8000
@@ -198,3 +198,4 @@ wordCount.pack(pady=10)
 
 
 root.mainloop()
+

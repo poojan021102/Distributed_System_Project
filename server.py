@@ -83,19 +83,19 @@ def goInfinite(c,name):
 def WordCountFunction(c,name):
     service = get_gdrive_service()
     allSlaves = []
-    ns = Pyro4.locateNS('192.168.29.58')
+    q = multiprocessing.Queue()
+    p1 = [] 
     for n in name:
         try:
-            uri = ns.lookup(n)
-            try:
-                s = Pyro4.Proxy(uri)
-                print(f"{n}: {s.getStatus()}")
-                allSlaves.append(s)
-            except Exception as e:
-                continue
+            p = multiprocessing.Process(target=ConnectSlave,args=(n,q))
+            p.start()
+            p1.append(p)
         except Exception as e:
-            print(e)
             continue
+    for p in p1:
+        p.join()
+    while not q.empty():
+        allSlaves.append(q.get())
     id = str(c.recv(1024).decode())
     # print(allSlaves)
     FileDownload(service, id, f"{id}.txt") 
@@ -160,24 +160,36 @@ def send_for_matrix(slave,i,m1,matrix,queue):
         l1.append(int(h))
     queue.put(l1)
 
-
+def ConnectSlave(name,queue):
+    try:
+        ns = Pyro4.locateNS('192.168.29.58')
+        uri = ns.lookup(name)
+        s = Pyro4.Proxy(uri)
+        try:
+            print(f"{name}:{s.getStatus()}")
+            queue.put(s)
+        except Exception as e:
+            print(f"Error while connecting {name}")
+    except Exception as e:
+        print(f"Error while connecting {name}")
 def MatrixMultiplicationFunction(c,name):
     matrix = b''
     allSlaves = []
     matrix += c.recv(1024)
-    ns = Pyro4.locateNS('192.168.29.58')
+    q = multiprocessing.Queue()
+    p1 = [] 
     for n in name:
         try:
-            uri = ns.lookup(n)
-            try:
-                s = Pyro4.Proxy(uri)
-                print(f"{n}: {s.getStatus()}")
-                allSlaves.append(s)
-            except Exception as e:
-                continue
+            p = multiprocessing.Process(target=ConnectSlave,args=(n,q))
+            p.start()
+            p1.append(p)
         except Exception as e:
-            print(e)
             continue
+    for p in p1:
+        # print("herhe")
+        p.join()
+    while not q.empty():
+        allSlaves.append(q.get())
     matrix = pickle.loads(matrix)
     queue = multiprocessing.Queue()
     c.send(bytes("ack",'utf-8'))
