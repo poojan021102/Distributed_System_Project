@@ -75,25 +75,29 @@ def send_for_word_count(slave,l,queue):
 def goInfinite(c,name):
     while True:
         op = c.recv(1024).decode()
-        print(op)
         if op == "1":
             WordCountFunction(c,name)
         else:
             MatrixMultiplicationFunction(c,name)
 
 def WordCountFunction(c,name):
-    print("Here1")
     service = get_gdrive_service()
     allSlaves = []
     ns = Pyro4.locateNS('192.168.29.58')
     for n in name:
         try:
             uri = ns.lookup(n)
-            allSlaves.append(Pyro4.Proxy(uri))
+            try:
+                s = Pyro4.Proxy(uri)
+                print(f"{n}: {s.getStatus()}")
+                allSlaves.append(s)
+            except Exception as e:
+                continue
         except Exception as e:
+            print(e)
             continue
     id = str(c.recv(1024).decode())
-    print(id)
+    # print(allSlaves)
     FileDownload(service, id, f"{id}.txt") 
     f = open(f"{id}.txt",encoding='utf8')
     w = ""
@@ -111,7 +115,6 @@ def WordCountFunction(c,name):
     while st < len(words):
         try:
             slave = allSlaves[i]
-            print(f"Slave {i+1}: {slave.getStatus()}")
             if each_words_count == 0:
                 en = st
             else:
@@ -162,13 +165,18 @@ def MatrixMultiplicationFunction(c,name):
     matrix = b''
     allSlaves = []
     matrix += c.recv(1024)
-    print("Here")
     ns = Pyro4.locateNS('192.168.29.58')
     for n in name:
         try:
             uri = ns.lookup(n)
-            allSlaves.append(Pyro4.Proxy(uri))
+            try:
+                s = Pyro4.Proxy(uri)
+                print(f"{n}: {s.getStatus()}")
+                allSlaves.append(s)
+            except Exception as e:
+                continue
         except Exception as e:
+            print(e)
             continue
     matrix = pickle.loads(matrix)
     queue = multiprocessing.Queue()
