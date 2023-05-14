@@ -49,10 +49,12 @@ def performWordCount():
             v.config(command=text.yview)
             text.pack()
             for y in ans:
+                # print(y)
                 if ":" in y:
                     t = y.split(":")
-                    s = s + f"{t[0]}: {t[1]}\n"
-                    text.insert("end", s)
+                    # s = s + 
+                    # print(s)
+                    text.insert("end", f"{t[0]}: {t[1]}\n")
             btn.destroy()
     def FileUpload(service, filepath):
         name = filepath.split('/')[-1]
@@ -81,8 +83,8 @@ def performWordCount():
 def performMatrixMultiplication():
     # c.send(bytes("2",'utf-8'))
     class MatrixInput(tk.Frame):
-        def __init__(self, parent, rows=2, cols=2):
-            super().__init__(parent)
+        def _init_(self, parent, rows=2, cols=2):
+            super()._init_(parent)
             self.rows = rows
             self.cols = cols
             self.entries = [[tk.Entry(self) for j in range(cols)] for i in range(rows)]
@@ -196,4 +198,3 @@ wordCount.pack(pady=10)
 
 
 root.mainloop()
-
